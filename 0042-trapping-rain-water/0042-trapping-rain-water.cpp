@@ -1,23 +1,27 @@
 class Solution {
 public:
-    int trap(vector<int>& a) { //a ==heights array
+    int trap(vector<int>& a) { // a == height array
+        int n = a.size();
+        if (n == 0) return 0;
+
         int ans = 0;
+        vector<int> lb(n), rb(n);
 
-        for(int i=1; i<a.size()-1; i++){
+        // Left max array
+        lb[0] = a[0];
+        for (int i = 1; i < n; i++) {
+            lb[i] = max(a[i], lb[i - 1]);
+        }
 
-            int lb = a[i]; // lb = left boundary
-            for(int j=0; j<=i-1; j++){
-                if(a[j] > lb) lb = a[j];
-            }
+        // Right max array
+        rb[n - 1] = a[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            rb[i] = max(a[i], rb[i + 1]);
+        }
 
-            int rb = a[i]; // rb = right boundary
-            for(int j=i+1; j<a.size(); j++){
-                if(a[j] > rb) rb = a[j];
-            }
-
-            int wl = min(lb, rb);  // wl = water level
-            int tw = wl - a[i];
-            ans += tw;
+        // Water trapped
+        for (int i = 1; i < n - 1; i++) {
+            ans += min(lb[i], rb[i]) - a[i];
         }
 
         return ans;
