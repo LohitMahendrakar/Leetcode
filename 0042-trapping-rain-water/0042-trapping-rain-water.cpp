@@ -4,25 +4,35 @@ public:
         int n = a.size();
         if (n == 0) return 0;
 
-        int ans = 0;
-        vector<int> lb(n), rb(n);
+        int ans = 0;      // Total amount of trapped water
 
-        // Left max array
-        lb[0] = a[0];
-        for (int i = 1; i < n; i++) {
-            lb[i] = max(a[i], lb[i - 1]);
-        }
+        int lhd = a[0];   // lhd = Left Highest so far (maximum height seen from the left side)
+        int rhd = a[n-1]; // rhd = Right Highest so far (maximum height seen from the right side)
 
-        // Right max array
-        rb[n - 1] = a[n - 1];
-        for (int i = n - 2; i >= 0; i--) {
-            rb[i] = max(a[i], rb[i + 1]);
-        }
+        int i = 0;        // Left pointer (starts from the leftmost bar)
+        int j = n - 1;    // Right pointer (starts from the rightmost bar)
 
-        // Water trapped
-        for (int i = 1; i < n - 1; i++) {
-            ans += min(lb[i], rb[i]) - a[i];
-        }
+        // Process until the two pointers meet
+        while (i <= j) {
+
+            // Compare the left and right highest walls
+            if (lhd <= rhd) {
+                // Move from the left side
+                if (a[i] >= lhd) 
+                    lhd = a[i]; // Update left highest if current bar is taller
+                else 
+                    ans += lhd - a[i]; // Water trapped is difference between left highest and current height
+                i++; // Move left pointer forward
+            }
+            else {
+                // Move from the right side
+                if (a[j] >= rhd) 
+                    rhd = a[j]; // Update right highest if current bar is taller
+                else 
+                    ans += rhd - a[j]; // Water trapped is difference between right highest and current height
+                j--; // Move right pointer backward
+            }
+        } 
 
         return ans;
     }
