@@ -1,31 +1,31 @@
 class Solution {
 public:
 
-    int f(int m, int n, vector<vector<int>>& matrix, vector<vector<int>>& dp){
-
-        
-        if(m >= matrix.size()) return 1e9;
-        if(n<0 || n>=matrix[0].size()) return 1e9;
-        if(m == matrix.size()-1) return matrix[m][n];
-
-        if(dp[m][n] != -1) return dp[m][n];
-
-        int ld = f(m+1, n-1, matrix, dp);
-        int dwn = f(m+1, n, matrix, dp);
-        int rd = f(m+1, n+1, matrix, dp);
-
-        return dp[m][n] = matrix[m][n] + min({ld, dwn, rd});
-    }
     int minFallingPathSum(vector<vector<int>>& matrix) {
         int m = matrix.size();
 
-        vector<vector<int>> dp(m, vector<int>(m, -1));
-
-        int ans = INT_MAX;
-        for(int i=0; i<matrix.size(); i++){
-            ans = min(ans, f(0, i, matrix, dp));
+        vector<vector<int>> dp(m, vector<int>(m));
+        for(int i=0; i<m; i++){
+            dp[0][i] = matrix[0][i];
         }
 
+        for(int i=1; i<m; i++){
+            for(int j=0; j<m; j++){
+                if(j<=0) dp[i][j] = min(dp[i-1][j], dp[i-1][j+1]) + matrix[i][j];
+                else if(j>=m-1) dp[i][j] = min(dp[i-1][j], dp[i-1][j-1]) + matrix[i][j];
+
+                else{
+                    dp[i][j] = min({dp[i-1][j], dp[i-1][j-1], dp[i-1][j+1]}) + matrix[i][j];
+                }
+            }
+        }
+
+        int ans = 1e9;
+        for(int j=0; j<m; j++){
+            ans = min(ans, dp[m-1][j]);
+        }
+
+        
         return ans;
     }
 };
